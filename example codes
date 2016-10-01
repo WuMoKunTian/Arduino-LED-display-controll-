@@ -1,0 +1,259 @@
+=========================================================================
+Arduino UNO 
+MAX7219 chip for display
+library <LedControl.h>
+
+shock sensor couple back the shock data, controlling display 
+
+I used 2 forms to show diff methods of LedControll:
+1, mathsmatics
+2, animation
+=========================================================================
+
+#include <LedControl.h>
+
+int ep = 8; //shock sensors reading data PIN
+
+int DIN = 2; // MAX7219 chip's DataIn
+int CS = 3;  // Latch PIN
+int CLK = 4; //Clock PIN
+
+LedControl lc = LedControl(DIN, CLK, CS, 1);
+
+void setup() {
+  pinMode(ep,INPUT); 
+  // set up the shock sensor reading
+  
+  lc.shutdown(0,false);
+  lc.setIntensity(0,15);
+  lc.clearDisplay(0);
+  // set up the MAX7219 chip and Led Display
+
+  Serial.begin(9600);
+  Serial.println("____________________Here we go!!_________________");
+  // set up the communication channel between Arduino and chips
+}
+
+long TP_init(){
+  delay(10);
+  long measurement = pulseIn(ep,HIGH);
+  return measurement; 
+  }
+//shock sensor read 
+
+void anim1() {
+  byte f1[8] = {
+  B00000000,
+  B00000000,
+  B00000000,
+  B00001000,
+  B00000000,
+  B00000000,
+  B00000000,
+  B00000000,
+  };
+  byte f2[8] = {
+  B00000000,
+  B00000000,
+  B00001000,
+  B00010100,
+  B00001000,
+  B00000000,
+  B00000000,
+  B00000000,
+  };
+  byte f3[8] = {
+  B00000000,
+  B00001000,
+  B00010100,
+  B00100010,
+  B00010100,
+  B00001000,
+  B00000000,
+  B00000000,
+  };
+  byte f4[8] = {
+  B00001000,
+  B00010100,
+  B00100010,
+  B01000001,
+  B00100010,
+  B00010100,
+  B00001000,
+  B00000000,
+  };
+  byte f5[8] = {
+  B00010100,
+  B00100010,
+  B01100001,
+  B10000000,
+  B01000001,
+  B00100010,
+  B00010100,
+  B00001000,
+  };
+  byte f6[8] = {
+  B00100010,
+  B01000001,
+  B10000000,
+  B10000000,
+  B01000000,
+  B00100001,
+  B00010010,
+  B00001100,
+  };
+  byte f7[8] = {
+  B01000001,
+  B10000000,
+  B00000000,
+  B00001000,
+  B10000000,
+  B01000000,
+  B00100001,
+  B00010010,
+  };
+  byte f8[8] = {
+  B10000000,
+  B00000000,
+  B00000000,
+  B00000000,
+  B00000000,
+  B10000000,
+  B01000000,
+  B00100001,
+  };
+  byte f9[8] = {
+  B00000000,
+  B00000000,
+  B00000000,
+  B00000000,
+  B00000000,
+  B00000000,
+  B10000000,
+  B01000000,
+  };
+  byte f10[8] = {
+  B00000000,
+  B00000000,
+  B00000000,
+  B00000000,
+  B00000000,
+  B00000000,
+  B00000000,
+  B10000000,
+  };
+  byte f11[8] = {
+  B00000000,
+  B00000000,
+  B00000000,
+  B00000000,
+  B00000000,
+  B00000000,
+  B00000000,
+  B00000000,
+  };
+
+  for (int i = 0; i <= 7; i++) { lc.setRow(0,i,f1[i]);}
+  delay(42);
+  for (int i = 0; i <= 7; i++) { lc.setRow(0,i,f2[i]);}
+  delay(42);
+  for (int i = 0; i <= 7; i++) { lc.setRow(0,i,f3[i]);}
+  delay(42);
+  for (int i = 0; i <= 7; i++) { lc.setRow(0,i,f4[i]);}
+  delay(42);
+  for (int i = 0; i <= 7; i++) { lc.setRow(0,i,f5[i]);}
+  delay(42);
+  for (int i = 0; i <= 7; i++) { lc.setRow(0,i,f6[i]);}
+  delay(42);
+  for (int i = 0; i <= 7; i++) { lc.setRow(0,i,f7[i]);}
+  delay(42);
+  for (int i = 0; i <= 7; i++) { lc.setRow(0,i,f8[i]);}
+  delay(42);
+  for (int i = 0; i <= 7; i++) { lc.setRow(0,i,f9[i]);}
+  delay(42);
+  for (int i = 0; i <= 7; i++) { lc.setRow(0,i,f10[i]);}
+  delay(42);
+  for (int i = 0; i <= 7; i++) { lc.setRow(0,i,f11[i]);}
+  delay(42);  
+}
+// animation form which made a rigid cycle
+
+
+bool inside(float x, float y, int cx, int cy, float r) {
+  float x0 = x - cx;
+  float y0 = y - cy;
+  return (x0 * x0 + y0 * y0 < r * r);
+}
+
+bool outside(float x, float y, int cx, int cy, float r) {
+  return (!inside(x, y, cx, cy, r));
+}
+// 2 conditions judged function
+
+
+void make_circle_image (int n, int x, int y, int w, int h) {
+
+  float r = n - 0.5;
+  // The circle intersects with the square if at least one vertex is
+  // inside AND at least one is outside
+  // This is the same as saying !(all inside) && !(all outside)
+  for (int j = 0; j < w; j++) {
+    int v = 0;
+    for (int i = 0; i < h; i++) {
+      float x0 = j - 0.5;
+      float x1 = j + 0.5;
+      float y0 = i - 0.5;
+      float y1 = i + 0.5;
+      if ((!(inside(x0, y0, x, y, r) &&
+             inside(x0, y1, x, y, r) &&
+             inside(x1, y0, x, y, r) &&
+             inside(x1, y1, x, y, r))) &&
+          (!(outside(x0, y0, x, y, r) &&
+             outside(x0, y1, x, y, r) &&
+             outside(x1, y0, x, y, r) &&
+             outside(x1, y1, x, y, r)))) {
+        v = (v << 1) | 1;
+      } else {
+        v = (v << 1);
+      }
+    }
+    lc.setRow(0, j, v);
+  }
+}
+// make the cycle bigger than bigger, but still in the 8*8 matrix
+
+int width = 8, height = 8;
+int r = 0, xr = 0, yr = 0;
+void loop() {
+  long measurement = TP_init();
+  //delay(200);
+  Serial.print("measurement = ");
+  Serial.println(measurement);
+  Serial.println("________________________________");
+  // for clear knowing what the shock data
+
+  if (measurement == 0){
+    lc.clearDisplay(0);
+    }
+  
+  if ( (measurement > 1000) && (measurement <= 10000)){
+  if (r % width == 0) {
+    xr = 2 + random(0, width - 4);
+    yr = 2 + random(0, height - 4);
+    r = 0;
+    }
+  // set the random original point inside of the middle of Matrix. ( it's a small 4*4 matrix )
+  
+  delay(21);
+  make_circle_image (r, xr, yr, width, width);
+  r ++;
+  //lc.clearDisplay(0);
+  return;
+  }
+
+  if (measurement > 10000){
+  anim1();
+  //lc.clearDisplay(0);
+  return;
+  }
+}
