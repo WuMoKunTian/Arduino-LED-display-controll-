@@ -224,13 +224,15 @@ void make_circle_image (int n, int x, int y, int w, int h) {
 
 int width = 8, height = 8;
 int r = 0, xr = 0, yr = 0;
+// set the matrix is 8*8, the original point is (0, 0), the original cycle is a point. everything is 0.
+
 void loop() {
   long measurement = TP_init();
   //delay(200);
   Serial.print("measurement = ");
   Serial.println(measurement);
   Serial.println("________________________________");
-  // for clear knowing what the shock data
+  // for clearly knowing what the shock data
 
   if (measurement == 0){
     lc.clearDisplay(0);
