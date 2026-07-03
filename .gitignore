@@ -1,0 +1,13 @@
+.DS_Store
+*.tmp
+*.log
+
+# Arduino build output
+build/
+*.elf
+*.hex
+*.bin
+
+# Local editor files
+.vscode/
+.idea/
